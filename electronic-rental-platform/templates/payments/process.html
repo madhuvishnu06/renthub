@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+
+{% block title %}Payment - RentalHub{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 1000px; margin-top: 2rem;">
+    <h1 style="margin-bottom: 2rem;">Complete Payment</h1>
+    
+    <div class="grid grid-2" style="gap: 2rem; align-items: start;">
+        <!-- Payment Methods -->
+        <div>
+            <!-- Added credit card payment section -->
+            <div class="card" style="margin-bottom: 2rem;">
+                <h2 style="margin-bottom: 1.5rem;">Credit Card Payment</h2>
+                <p style="color: var(--color-text-muted); margin-bottom: 1.5rem; font-size: 0.875rem;">Enter your card details and upload payment confirmation screenshot</p>
+                
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="payment_method" value="credit_card">
+                    
+                    {% for field in credit_card_form %}
+                    <div class="form-group">
+                        <label class="form-label">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.help_text %}
+                            <span style="color: var(--color-text-muted); font-size: 0.875rem;">{{ field.help_text }}</span>
+                        {% endif %}
+                        {% if field.errors %}
+                            <span style="color: var(--color-error); font-size: 0.875rem;">{{ field.errors.0 }}</span>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 0.5rem;">Pay with Credit Card</button>
+                </form>
+            </div>
+            
+            <!-- Online payment options -->
+            <div class="card" style="margin-bottom: 2rem;">
+                <h2 style="margin-bottom: 1.5rem;">Online Payment</h2>
+                <p style="color: var(--color-text-muted); margin-bottom: 1.5rem; font-size: 0.875rem;">Pay via Razorpay or Stripe (Screenshot required after payment)</p>
+                
+                <form method="post" enctype="multipart/form-data" style="margin-bottom: 1rem;">
+                    {% csrf_token %}
+                    <input type="hidden" name="payment_method" value="razorpay">
+                    
+                    <div class="form-group">
+                        <label class="form-label">Payment Screenshot (Required)</label>
+                        <input type="file" name="payment_screenshot" class="form-file" accept="image/*" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Transaction ID (Optional)</label>
+                        <input type="text" name="transaction_id" class="form-input" placeholder="Enter transaction ID">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">Pay with Razorpay</button>
+                </form>
+                
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="payment_method" value="stripe">
+                    
+                    <div class="form-group">
+                        <label class="form-label">Payment Screenshot (Required)</label>
+                        <input type="file" name="payment_screenshot" class="form-file" accept="image/*" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Transaction ID (Optional)</label>
+                        <input type="text" name="transaction_id" class="form-input" placeholder="Enter transaction ID">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width: 100%; background-color: #635bff;">Pay with Stripe</button>
+                </form>
+            </div>
+            
+            <!-- QR Code Payment -->
+            {% if shop_owner_qr %}
+            <div class="card" style="margin-bottom: 2rem;">
+                <h2 style="margin-bottom: 1.5rem;">Pay via QR Code</h2>
+                <p style="color: var(--color-text-muted); margin-bottom: 1rem; font-size: 0.875rem;">Scan the QR code to pay directly to the shop owner</p>
+                
+                <div style="text-align: center; margin-bottom: 1rem;">
+                    <img src="{{ shop_owner_qr.qr_code_image.url }}" alt="Payment QR Code" style="max-width: 250px; border-radius: var(--radius); border: 1px solid var(--color-border);">
+                </div>
+                
+                <div style="background: var(--color-bg); padding: 1rem; border-radius: var(--radius); font-size: 0.875rem; margin-bottom: 1.5rem;">
+                    <pre style="white-space: pre-wrap; margin: 0;">{{ shop_owner_qr.payment_details }}</pre>
+                </div>
+                
+                <!-- Required screenshot for QR code payment -->
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="payment_method" value="qr_code">
+                    
+                    <div class="form-group">
+                        <label class="form-label">Payment Screenshot (Required)</label>
+                        <input type="file" name="payment_screenshot" class="form-file" accept="image/*" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Transaction ID (Optional)</label>
+                        <input type="text" name="transaction_id" class="form-input" placeholder="Enter transaction ID">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Payment Details (Optional)</label>
+                        <textarea name="payment_details" class="form-textarea" rows="2" placeholder="Any additional details..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-secondary" style="width: 100%;">Submit QR Code Payment</button>
+                </form>
+            </div>
+            {% endif %}
+            
+            <!-- Other Payment Methods -->
+            <div class="card">
+                <h2 style="margin-bottom: 1.5rem;">Other Payment Methods</h2>
+                <p style="color: var(--color-text-muted); margin-bottom: 1.5rem; font-size: 0.875rem;">Upload screenshot of payment made via other methods (Bank transfer, UPI, etc.)</p>
+                
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="hidden" name="payment_method" value="screenshot">
+                    
+                    <div class="form-group">
+                        <label class="form-label">Payment Screenshot (Required)</label>
+                        <input type="file" name="payment_screenshot" class="form-file" accept="image/*" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Transaction ID (Optional)</label>
+                        <input type="text" name="transaction_id" class="form-input" placeholder="Enter transaction ID">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Payment Details (Optional)</label>
+                        <textarea name="payment_details" class="form-textarea" rows="2" placeholder="Describe the payment method used..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-secondary" style="width: 100%;">Upload Payment Proof</button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Order Summary -->
+        <div style="position: sticky; top: 100px;">
+            <div class="card">
+                <h2 style="margin-bottom: 1.5rem;">Order Summary</h2>
+                
+                <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--color-border);">
+                    {% if booking.product.images.first %}
+                        <img src="{{ booking.product.images.first.image.url }}" alt="{{ booking.product.title }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: var(--radius);">
+                    {% endif %}
+                    <div>
+                        <h3 style="font-size: 1.125rem; margin-bottom: 0.25rem;">{{ booking.product.title }}</h3>
+                        <p style="color: var(--color-text-muted); font-size: 0.875rem;">{{ booking.product.category.name }}</p>
+                    </div>
+                </div>
+                
+                <div style="display: grid; gap: 0.75rem; margin-bottom: 1.5rem;">
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--color-text-muted);">Rental Period</span>
+                        <span style="font-weight: 600;">{{ booking.get_rental_period_display }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--color-text-muted);">Duration</span>
+                        <span style="font-weight: 600;">{{ booking.duration_days }} days</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--color-text-muted);">Dates</span>
+                        <span style="font-weight: 600; text-align: right;">{{ booking.start_date|date:"M d" }} - {{ booking.end_date|date:"M d, Y" }}</span>
+                    </div>
+                </div>
+                
+                <div style="padding: 1.5rem; background: linear-gradient(135deg, #f5f3f0 0%, #e8e6e1 100%); border-radius: var(--radius); margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 1.25rem; font-weight: 600;">Total Amount</span>
+                        <span style="font-size: 2rem; font-weight: 700; color: var(--color-secondary);">${{ booking.total_price }}</span>
+                    </div>
+                </div>
+                
+                <!-- Added important notice about screenshot requirement -->
+                <div style="padding: 1rem; background: #fef3c7; border-radius: var(--radius); border: 1px solid #fbbf24;">
+                    <p style="color: #92400e; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.5rem;">⚠️ Important</p>
+                    <p style="color: #92400e; font-size: 0.875rem;">Payment screenshot is mandatory for all payment methods. Upload it after completing the payment for verification.</p>
+                </div>
+                
+                <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--color-border);">
+                    <p style="color: var(--color-text-muted); font-size: 0.875rem; text-align: center;">Secure payment processed via RentalHub</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Reject Booking - RentalHub{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px; margin-top: 2rem;">
+    <h1 style="margin-bottom: 2rem;">Reject Booking Request</h1>
+    
+    <div class="card">
+        <h2 style="margin-bottom: 1rem;">Booking #{{ booking.pk }}</h2>
+        
+        <div style="margin-bottom: 1.5rem; padding: 1rem; background: var(--color-bg); border-radius: var(--radius);">
+            <p style="margin-bottom: 0.5rem;"><strong>Product:</strong> {{ booking.product.title }}</p>
+            <p style="margin-bottom: 0.5rem;"><strong>Customer:</strong> {{ booking.customer.username }}</p>
+            <p style="margin-bottom: 0.5rem;"><strong>Duration:</strong> {{ booking.duration_days }} days</p>
+            <p style="margin-bottom: 0.5rem;"><strong>Total:</strong> ${{ booking.total_price }}</p>
+        </div>
+        
+        <p style="margin-bottom: 1.5rem; color: var(--color-text-muted);">
+            Please provide a reason for rejecting this booking request. The customer will be notified.
+        </p>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label class="form-label">Reason for Rejection (Optional)</label>
+                <textarea name="notes" class="form-textarea" rows="3" placeholder="e.g., Product not available for requested dates..."></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 0.5rem; margin-top: 1.5rem;">
+                <a href="{% url 'bookings:detail' booking.pk %}" class="btn btn-outline" style="flex: 1; text-align: center;">Cancel</a>
+                <button type="submit" class="btn" style="flex: 1; background-color: var(--color-error); color: white;">Reject Booking</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

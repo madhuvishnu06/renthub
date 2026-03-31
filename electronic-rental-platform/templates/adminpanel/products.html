@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Products - Admin{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h1>Manage Products</h1>
+        <a href="{% url 'adminpanel:dashboard' %}" class="btn btn-outline">← Back to Dashboard</a>
+    </div>
+    
+    <!-- Filter -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <form method="get" style="display: flex; gap: 1rem; align-items: end;">
+            <div class="form-group" style="flex: 1; margin: 0;">
+                <label class="form-label">Filter by Category</label>
+                <select name="category" class="form-select">
+                    <option value="">All Categories</option>
+                    {% for category in categories %}
+                    <option value="{{ category.pk }}" {% if category_filter == category.pk|stringformat:"s" %}selected{% endif %}>
+                        {{ category.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </form>
+    </div>
+    
+    <!-- Products Grid -->
+    <div class="grid grid-3">
+        {% for product in products %}
+        <div class="card">
+            {% if product.images.first %}
+                <img src="{{ product.images.first.image.url }}" alt="{{ product.title }}" class="card-img">
+            {% else %}
+                <div class="card-img" style="background: linear-gradient(135deg, #e5e5e5 0%, #d4d4d4 100%); display: flex; align-items: center; justify-content: center; color: #999;">
+                    No Image
+                </div>
+            {% endif %}
+            
+            <h3 style="margin-bottom: 0.5rem;">{{ product.title }}</h3>
+            <p style="color: var(--color-text-muted); font-size: 0.875rem; margin-bottom: 0.5rem;">{{ product.category.name }}</p>
+            <p style="color: var(--color-text-muted); font-size: 0.875rem; margin-bottom: 0.5rem;">Owner: {{ product.owner.username }}</p>
+            
+            <div style="margin-bottom: 1rem;">
+                <p style="font-size: 1.25rem; font-weight: 700; color: var(--color-secondary);">${{ product.daily_price }}/day</p>
+                <p style="font-size: 0.875rem; color: var(--color-text-muted);">Stock: {{ product.stock }}</p>
+            </div>
+            
+            <a href="{% url 'products:detail' product.pk %}" class="btn btn-outline" style="width: 100%; text-align: center;">View Details</a>
+        </div>
+        {% empty %}
+        <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+            <p style="color: var(--color-text-muted); font-size: 1.25rem;">No products found.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

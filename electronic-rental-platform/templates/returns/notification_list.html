@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+<div class="container mx-auto py-8">
+    <h1 class="text-3xl font-bold mb-6">Notifications</h1>
+
+    {% if notifications %}
+    <div class="space-y-4">
+        {% for notification in notifications %}
+        <div class="bg-white rounded-lg shadow-md p-6 {% if not notification.is_read %}border-l-4 border-blue-500{% endif %}">
+            <div class="flex justify-between items-start mb-2">
+                <div class="flex-1">
+                    <h3 class="text-lg font-semibold">{{ notification.title }}</h3>
+                    <p class="text-gray-700 mt-1">{{ notification.message }}</p>
+                </div>
+                <div class="text-right ml-4">
+                    {% if not notification.is_read %}
+                    <span class="inline-block px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded font-semibold">
+                        New
+                    </span>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="text-sm text-gray-600 mb-3">
+                {{ notification.created_at|date:"F d, Y H:i" }}
+            </div>
+
+            <div class="flex gap-2">
+                {% if notification.return_request %}
+                <a href="{% url 'returns:request_detail' notification.return_request.pk %}" class="text-blue-500 hover:underline text-sm font-semibold">
+                    View Return Request →
+                </a>
+                {% endif %}
+                
+                {% if not notification.is_read %}
+                <a href="{% url 'returns:notification_mark_as_read' notification.pk %}" class="text-gray-500 hover:text-gray-700 text-sm">
+                    Mark as Read
+                </a>
+                {% endif %}
+                
+                <form method="post" action="{% url 'returns:notification_delete' notification.pk %}" style="display: inline;" onsubmit="return confirm('Delete this notification?');">
+                    {% csrf_token %}
+                    <button type="submit" class="text-red-500 hover:text-red-700 text-sm">
+                        Delete
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <div class="mt-8 flex justify-center gap-2">
+        {% if page_obj.has_previous %}
+        <a href="?page=1" class="px-3 py-1 border rounded hover:bg-gray-100">First</a>
+        <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-1 border rounded hover:bg-gray-100">Previous</a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <span class="px-3 py-1 border border-blue-500 bg-blue-100 text-blue-700 rounded">{{ num }}</span>
+            {% else %}
+            <a href="?page={{ num }}" class="px-3 py-1 border rounded hover:bg-gray-100">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}" class="px-3 py-1 border rounded hover:bg-gray-100">Next</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}" class="px-3 py-1 border rounded hover:bg-gray-100">Last</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="bg-gray-100 rounded-lg p-12 text-center">
+        <p class="text-gray-600 text-lg">You have no notifications yet.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

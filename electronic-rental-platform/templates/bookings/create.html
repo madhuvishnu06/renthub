@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+
+{% block title %}Book {{ product.title }} - RentalHub{% endblock %}
+
+{% block extra_css %}
+<style>
+    .price-summary {
+        position: sticky;
+        top: 100px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 2rem;">
+    <h1 style="margin-bottom: 2rem;">Complete Your Booking</h1>
+    
+    <!-- Added error display section -->
+    {% if messages %}
+    <div style="margin-bottom: 1.5rem;">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}" style="padding: 1rem; margin-bottom: 0.5rem; border-radius: var(--radius); {% if message.tags == 'error' %}background: #fee; color: #c00;{% else %}background: #efe; color: #060;{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    
+    <div class="grid grid-2" style="gap: 2rem; align-items: start;">
+        <!-- Booking Form -->
+        <div class="card">
+            <h2 style="margin-bottom: 1.5rem;">Rental Details</h2>
+            
+            <!-- Added onsubmit handler for debugging -->
+            <form method="post" id="booking-form" onsubmit="console.log('[v0] Form submitting...'); return true;">
+                {% csrf_token %}
+                
+                {% for field in form %}
+                <div class="form-group">
+                    <label class="form-label">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.errors %}
+                        <span style="color: var(--color-error); font-size: 0.875rem;">{{ field.errors.0 }}</span>
+                    {% endif %}
+                </div>
+                {% endfor %}
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Proceed to Payment</button>
+            </form>
+        </div>
+        
+        <!-- Price Summary -->
+        <div class="price-summary">
+            <div class="card">
+                <h2 style="margin-bottom: 1rem;">Booking Summary</h2>
+                
+                <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
+                    {% if product.images.first %}
+                        <img src="{{ product.images.first.image.url }}" alt="{{ product.title }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: var(--radius);">
+                    {% endif %}
+                    <div>
+                        <h3 style="font-size: 1.125rem; margin-bottom: 0.25rem;">{{ product.title }}</h3>
+                        <p style="color: var(--color-text-muted); font-size: 0.875rem;">{{ product.category.name }}</p>
+                    </div>
+                </div>
+                
+                <div style="border-top: 1px solid var(--color-border); padding-top: 1rem; margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span>Daily Rate</span>
+                        <span style="font-weight: 600;">${{ product.daily_price }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span>Weekly Rate</span>
+                        <span style="font-weight: 600;">${{ product.weekly_price }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <span>Monthly Rate</span>
+                        <span style="font-weight: 600;">${{ product.monthly_price }}</span>
+                    </div>
+                </div>
+                
+                <div id="price-calculation" style="display: none; background: linear-gradient(135deg, #f5f3f0 0%, #e8e6e1 100%); padding: 1rem; border-radius: var(--radius); margin-top: 1rem;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                        <span>Duration</span>
+                        <span id="duration-text" style="font-weight: 600;">-</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; font-size: 1.25rem; font-weight: 700; color: var(--color-secondary); padding-top: 0.5rem; border-top: 1px solid var(--color-border);">
+                        <span>Estimated Total</span>
+                        <span id="total-price">$0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const dailyPrice = parseFloat('{{ product.daily_price }}');
+const weeklyPrice = parseFloat('{{ product.weekly_price }}');
+const monthlyPrice = parseFloat('{{ product.monthly_price }}');
+
+document.getElementById('booking-form').addEventListener('submit', function(e) {
+    console.log('[v0] Form submit event triggered');
+    console.log('[v0] Start date:', document.querySelector('[name="start_date"]').value);
+    console.log('[v0] End date:', document.querySelector('[name="end_date"]').value);
+    console.log('[v0] Rental period:', document.querySelector('[name="rental_period"]').value);
+});
+
+function calculatePrice() {
+    const startDate = document.querySelector('[name="start_date"]').value;
+    const endDate = document.querySelector('[name="end_date"]').value;
+    const rentalPeriod = document.querySelector('[name="rental_period"]').value;
+    
+    if (!startDate || !endDate) return;
+    
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const days = Math.ceil((end - start) / (1000 * 60 * 60 * 24)) + 1;
+    
+    if (days < 1) {
+        document.getElementById('price-calculation').style.display = 'none';
+        return;
+    }
+    
+    let total = 0;
+    let durationText = '';
+    
+    if (rentalPeriod === 'daily') {
+        total = dailyPrice * days;
+        durationText = `${days} day${days > 1 ? 's' : ''}`;
+    } else if (rentalPeriod === 'weekly') {
+        const weeks = (days / 7).toFixed(1);
+        total = weeklyPrice * weeks;
+        durationText = `${weeks} week${weeks > 1 ? 's' : ''}`;
+    } else if (rentalPeriod === 'monthly') {
+        const months = (days / 30).toFixed(1);
+        total = monthlyPrice * months;
+        durationText = `${months} month${months > 1 ? 's' : ''}`;
+    }
+    
+    document.getElementById('duration-text').textContent = durationText;
+    document.getElementById('total-price').textContent = `$${total.toFixed(2)}`;
+    document.getElementById('price-calculation').style.display = 'block';
+}
+
+document.querySelector('[name="start_date"]').addEventListener('change', calculatePrice);
+document.querySelector('[name="end_date"]').addEventListener('change', calculatePrice);
+document.querySelector('[name="rental_period"]').addEventListener('change', calculatePrice);
+</script>
+{% endblock %}

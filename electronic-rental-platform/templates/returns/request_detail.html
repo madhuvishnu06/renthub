@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Return Request Details{% endblock %}
+
+{% block content %}
+<div class="container mx-auto py-8">
+    <div class="max-w-4xl mx-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-3xl font-bold">Return Request #{{ return_request.pk }}</h1>
+            {% if return_request.status == 'pending' and return_request.shop_owner == request.user %}
+                <a href="{% url 'returns:request_review' return_request.pk %}" class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded">
+                    Review Request
+                </a>
+            {% endif %}
+        </div>
+
+        <!-- Status Badge -->
+        <div class="mb-6">
+            {% if return_request.status == 'pending' %}
+                <span class="inline-block px-4 py-2 bg-yellow-100 text-yellow-800 rounded-full font-semibold">
+                    ⏳ Pending Review
+                </span>
+            {% elif return_request.status == 'approved' %}
+                <span class="inline-block px-4 py-2 bg-green-100 text-green-800 rounded-full font-semibold">
+                    ✓ Approved
+                </span>
+            {% elif return_request.status == 'rejected' %}
+                <span class="inline-block px-4 py-2 bg-red-100 text-red-800 rounded-full font-semibold">
+                    ✗ Rejected
+                </span>
+            {% elif return_request.status == 'completed' %}
+                <span class="inline-block px-4 py-2 bg-blue-100 text-blue-800 rounded-full font-semibold">
+                    ✓ Completed
+                </span>
+            {% endif %}
+        </div>
+
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Details Column -->
+            <div class="md:col-span-2">
+                <!-- Product & Booking Info -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h2 class="text-xl font-semibold mb-4">Product & Booking Information</h2>
+                    <div class="space-y-3">
+                        <div class="flex justify-between border-b pb-2">
+                            <span class="text-gray-600">Product</span>
+                            <span class="font-semibold">{{ return_request.booking.product.title }}</span>
+                        </div>
+                        <div class="flex justify-between border-b pb-2">
+                            <span class="text-gray-600">Booking ID</span>
+                            <span class="font-semibold">#{{ return_request.booking.pk }}</span>
+                        </div>
+                        <div class="flex justify-between border-b pb-2">
+                            <span class="text-gray-600">Rental Period</span>
+                            <span class="font-semibold">{{ return_request.booking.start_date }} to {{ return_request.booking.end_date }}</span>
+                        </div>
+                        <div class="flex justify-between border-b pb-2">
+                            <span class="text-gray-600">Total Cost</span>
+                            <span class="font-semibold">${{ return_request.booking.total_price }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Return Request Details -->
+                <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                    <h2 class="text-xl font-semibold mb-4">Return Request Details</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-gray-600 mb-1">Reason for Return</p>
+                            <p class="font-semibold text-lg">{{ return_request.get_reason_display }}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600 mb-1">Description</p>
+                            <p class="text-gray-800">{{ return_request.description }}</p>
+                        </div>
+                        {% if return_request.proof_image %}
+                        <div>
+                            <p class="text-gray-600 mb-2">Proof Image</p>
+                            <img src="{{ return_request.proof_image.url }}" alt="Proof" class="max-w-md rounded-lg shadow">
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Shop Owner Response -->
+                {% if return_request.shop_owner_response %}
+                <div class="bg-blue-50 rounded-lg border border-blue-200 p-6">
+                    <h2 class="text-xl font-semibold mb-4">Shop Owner Response</h2>
+                    <p class="text-gray-800">{{ return_request.shop_owner_response }}</p>
+                    {% if return_request.reviewed_at %}
+                    <p class="text-xs text-gray-600 mt-3">Reviewed on {{ return_request.reviewed_at|date:"F d, Y H:i" }}</p>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Sidebar -->
+            <div>
+                <!-- Timeline -->
+                <div class="bg-white rounded-lg shadow-md p-6 sticky top-4">
+                    <h3 class="text-lg font-semibold mb-4">Timeline</h3>
+                    <div class="space-y-4">
+                        <div class="flex gap-3">
+                            <div class="text-green-500">✓</div>
+                            <div>
+                                <p class="font-semibold text-sm">Request Submitted</p>
+                                <p class="text-xs text-gray-600">{{ return_request.created_at|date:"F d, Y H:i" }}</p>
+                            </div>
+                        </div>
+                        {% if return_request.reviewed_at %}
+                        <div class="flex gap-3">
+                            <div class="text-green-500">✓</div>
+                            <div>
+                                <p class="font-semibold text-sm">Request {{ return_request.get_status_display }}</p>
+                                <p class="text-xs text-gray-600">{{ return_request.reviewed_at|date:"F d, Y H:i" }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Participants -->
+                <div class="bg-white rounded-lg shadow-md p-6 mt-6">
+                    <h3 class="text-lg font-semibold mb-4">Participants</h3>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="text-xs text-gray-600 uppercase">Customer</p>
+                            <p class="font-semibold">{{ return_request.customer.get_full_name|default:return_request.customer.username }}</p>
+                            <a href="mailto:{{ return_request.customer.email }}" class="text-blue-500 text-sm hover:underline">{{ return_request.customer.email }}</a>
+                        </div>
+                        <hr>
+                        <div>
+                            <p class="text-xs text-gray-600 uppercase">Shop Owner</p>
+                            <p class="font-semibold">{{ return_request.shop_owner.get_full_name|default:return_request.shop_owner.username }}</p>
+                            <a href="mailto:{{ return_request.shop_owner.email }}" class="text-blue-500 text-sm hover:underline">{{ return_request.shop_owner.email }}</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Back Link -->
+        <div class="mt-8">
+            <a href="{% url 'returns:request_list' %}" class="text-blue-500 hover:underline">
+                ← Back to Return Requests
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

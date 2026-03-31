@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Review - RentalHub{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px; margin-top: 3rem;">
+    <div class="card">
+        <h1 style="margin-bottom: 1rem; color: var(--color-error);">Delete Review</h1>
+        <p style="margin-bottom: 2rem; font-size: 1.125rem;">Are you sure you want to delete your review for <strong>{{ review.product.title }}</strong>? This action cannot be undone.</p>
+        
+        <div style="padding: 1rem; background: var(--color-bg); border-radius: var(--radius); margin-bottom: 2rem;">
+            <div style="color: #f59e0b; margin-bottom: 0.5rem;">
+                {% for i in "12345"|make_list %}
+                    {% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}
+                {% endfor %}
+            </div>
+            <p style="color: var(--color-text-muted);">{{ review.comment }}</p>
+        </div>
+        
+        <form method="post">
+            {% csrf_token %}
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary" style="flex: 1; background-color: var(--color-error);">Yes, Delete Review</button>
+                <a href="{% url 'products:detail' review.product.pk %}" class="btn btn-outline" style="flex: 1; text-align: center;">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

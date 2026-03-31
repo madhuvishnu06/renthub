@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Electronic Rental Platform{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{% url 'home' %}" class="logo">RentalHub</a>
+            <ul class="nav-links">
+                <li><a href="{% url 'products:list' %}">Browse</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'users:dashboard' %}">Dashboard</a></li>
+                    <li><a href="{% url 'chat:inbox' %}">Messages</a></li>
+                    <li><a href="{% url 'users:profile' %}">Profile</a></li>
+                    <li><a href="{% url 'users:logout' %}">Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'users:login' %}" class="btn btn-outline">Login</a></li>
+                    <li><a href="{% url 'users:signup' %}" class="btn btn-primary">Sign Up</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div>
+                <h3>RentalHub</h3>
+                <p>Premium electronics rental platform</p>
+            </div>
+            <div>
+                <h3>Quick Links</h3>
+                <a href="{% url 'home' %}">Home</a>
+                <a href="{% url 'products:list' %}">Browse Products</a>
+                <a href="#">About Us</a>
+            </div>
+            <div>
+                <h3>Support</h3>
+                <a href="#">Help Center</a>
+                <a href="#">Contact Us</a>
+                <a href="#">Terms of Service</a>
+            </div>
+            <div>
+                <h3>Connect</h3>
+                <a href="#">Twitter</a>
+                <a href="#">Instagram</a>
+                <a href="#">LinkedIn</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/static/js/main.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

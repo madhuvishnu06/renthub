@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Return Requests{% endblock %}
+
+{% block content %}
+<div class="container mx-auto py-8">
+    <div class="mb-6">
+        <h1 class="text-3xl font-bold mb-4">Return Requests</h1>
+        
+        {% if request.user.role == 'customer' %}
+        <p class="text-gray-600">Manage your product return requests</p>
+        {% elif request.user.role == 'shop_owner' %}
+        <p class="text-gray-600">Review customer return requests for your products</p>
+        {% endif %}
+    </div>
+
+    <!-- Filters -->
+    <div class="mb-6 flex gap-4 flex-wrap">
+        <a href="{% url 'returns:request_list' %}" class="px-4 py-2 rounded {% if not status_filter %}bg-blue-500 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
+            All
+        </a>
+        <a href="?status=pending" class="px-4 py-2 rounded {% if status_filter == 'pending' %}bg-blue-500 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
+            Pending
+        </a>
+        <a href="?status=approved" class="px-4 py-2 rounded {% if status_filter == 'approved' %}bg-blue-500 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
+            Approved
+        </a>
+        <a href="?status=rejected" class="px-4 py-2 rounded {% if status_filter == 'rejected' %}bg-blue-500 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
+            Rejected
+        </a>
+        <a href="?status=completed" class="px-4 py-2 rounded {% if status_filter == 'completed' %}bg-blue-500 text-white{% else %}bg-gray-200 text-gray-700 hover:bg-gray-300{% endif %}">
+            Completed
+        </a>
+    </div>
+
+    <!-- Return Requests List -->
+    {% if page_obj %}
+    <div class="space-y-4">
+        {% for return_request in page_obj %}
+        <div class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition">
+            <div class="flex justify-between items-start mb-4">
+                <div>
+                    <h3 class="text-lg font-semibold">{{ return_request.booking.product.title }}</h3>
+                    <p class="text-sm text-gray-600">Return Request #{{ return_request.pk }}</p>
+                </div>
+                <div>
+                    {% if return_request.status == 'pending' %}
+                        <span class="inline-block px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-semibold">
+                            ⏳ Pending
+                        </span>
+                    {% elif return_request.status == 'approved' %}
+                        <span class="inline-block px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">
+                            ✓ Approved
+                        </span>
+                    {% elif return_request.status == 'rejected' %}
+                        <span class="inline-block px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm font-semibold">
+                            ✗ Rejected
+                        </span>
+                    {% elif return_request.status == 'completed' %}
+                        <span class="inline-block px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-semibold">
+                            ✓ Completed
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4 text-sm">
+                <div>
+                    <p class="text-gray-600">Reason</p>
+                    <p class="font-semibold">{{ return_request.get_reason_display }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-600">Submitted</p>
+                    <p class="font-semibold">{{ return_request.created_at|date:"M d, Y" }}</p>
+                </div>
+                <div>
+                    <p class="text-gray-600">
+                        {% if request.user.role == 'customer' %}
+                            Shop Owner
+                        {% else %}
+                            Customer
+                        {% endif %}
+                    </p>
+                    <p class="font-semibold">
+                        {% if request.user.role == 'customer' %}
+                            {{ return_request.shop_owner.get_full_name|default:return_request.shop_owner.username }}
+                        {% else %}
+                            {{ return_request.customer.get_full_name|default:return_request.customer.username }}
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="text-right">
+                    <a href="{% url 'returns:request_detail' return_request.pk %}" class="text-blue-500 hover:underline font-semibold">
+                        View Details →
+                    </a>
+                </div>
+            </div>
+
+            {% if return_request.status == 'pending' and return_request.shop_owner == request.user %}
+            <div class="pt-4 border-t">
+                <a href="{% url 'returns:request_review' return_request.pk %}" class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded inline-block">
+                    Review Request
+                </a>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <div class="mt-8 flex justify-center gap-2">
+        {% if page_obj.has_previous %}
+        <a href="?page=1{% if status_filter %}&status={{ status_filter }}{% endif %}" class="px-3 py-1 border rounded hover:bg-gray-100">First</a>
+        <a href="?page={{ page_obj.previous_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}" class="px-3 py-1 border rounded hover:bg-gray-100">Previous</a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <span class="px-3 py-1 border border-blue-500 bg-blue-100 text-blue-700 rounded">{{ num }}</span>
+            {% else %}
+            <a href="?page={{ num }}{% if status_filter %}&status={{ status_filter }}{% endif %}" class="px-3 py-1 border rounded hover:bg-gray-100">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if status_filter %}&status={{ status_filter }}{% endif %}" class="px-3 py-1 border rounded hover:bg-gray-100">Next</a>
+        <a href="?page={{ page_obj.paginator.num_pages }}{% if status_filter %}&status={{ status_filter }}{% endif %}" class="px-3 py-1 border rounded hover:bg-gray-100">Last</a>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <div class="bg-gray-100 rounded-lg p-12 text-center">
+        <p class="text-gray-600 text-lg">No return requests found.</p>
+        {% if request.user.role == 'customer' %}
+        <p class="text-gray-600 mt-2">You can request returns for completed bookings.</p>
+        <a href="{% url 'bookings:list' %}" class="text-blue-500 hover:underline mt-4 inline-block">View your bookings →</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+
+{% block title %}Verify Payment - RentalHub{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px; margin-top: 2rem;">
+    <h1 style="margin-bottom: 2rem;">Verify Payment & Confirm Booking</h1>
+    
+    <div class="grid grid-2" style="gap: 2rem;">
+        <div class="card">
+            <h2 style="margin-bottom: 1rem;">Booking Details</h2>
+            
+            <div style="display: grid; gap: 0.75rem;">
+                <div>
+                    <p style="color: var(--color-text-muted); font-size: 0.875rem;">Booking ID</p>
+                    <p style="font-weight: 600;">#{{ booking.pk }}</p>
+                </div>
+                <div>
+                    <p style="color: var(--color-text-muted); font-size: 0.875rem;">Product</p>
+                    <p style="font-weight: 600;">{{ booking.product.title }}</p>
+                </div>
+                <div>
+                    <p style="color: var(--color-text-muted); font-size: 0.875rem;">Customer</p>
+                    <p style="font-weight: 600;">{{ booking.customer.username }}</p>
+                </div>
+                <div>
+                    <p style="color: var(--color-text-muted); font-size: 0.875rem;">Total Amount</p>
+                    <p style="font-weight: 600; font-size: 1.25rem; color: var(--color-secondary);">${{ booking.total_price }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2 style="margin-bottom: 1rem;">Payment Information</h2>
+            
+            {% if booking.payment %}
+            <div style="display: grid; gap: 0.75rem; margin-bottom: 1.5rem;">
+                <div>
+                    <p style="color: var(--color-text-muted); font-size: 0.875rem;">Payment Method</p>
+                    <p style="font-weight: 600;">{{ booking.payment.get_payment_method_display }}</p>
+                </div>
+                {% if booking.payment.transaction_id %}
+                <div>
+                    <p style="color: var(--color-text-muted); font-size: 0.875rem;">Transaction ID</p>
+                    <p style="font-weight: 600; font-family: monospace;">{{ booking.payment.transaction_id }}</p>
+                </div>
+                {% endif %}
+                {% if booking.payment.card_last_four %}
+                <div>
+                    <p style="color: var(--color-text-muted); font-size: 0.875rem;">Card</p>
+                    <p style="font-weight: 600;">**** **** **** {{ booking.payment.card_last_four }}</p>
+                </div>
+                {% endif %}
+                {% if booking.payment.payment_details %}
+                <div>
+                    <p style="color: var(--color-text-muted); font-size: 0.875rem;">Payment Details</p>
+                    <p style="font-weight: 600;">{{ booking.payment.payment_details }}</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            {% if booking.payment.payment_screenshot %}
+            <div>
+                <p style="color: var(--color-text-muted); font-size: 0.875rem; margin-bottom: 0.5rem;">Payment Screenshot</p>
+                <img src="{{ booking.payment.payment_screenshot.url }}" alt="Payment Screenshot" style="width: 100%; border-radius: var(--radius); border: 1px solid var(--color-border);">
+            </div>
+            {% endif %}
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="card" style="margin-top: 2rem;">
+        <p style="margin-bottom: 1.5rem; color: var(--color-text-muted);">
+            Review the payment screenshot and details above. Once you verify the payment is legitimate, confirm the booking to finalize the rental.
+        </p>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label class="form-label">Verification Notes (Optional)</label>
+                <textarea name="notes" class="form-textarea" rows="2" placeholder="e.g., Payment verified on 2025-01-15..."></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 0.5rem; margin-top: 1.5rem;">
+                <a href="{% url 'bookings:detail' booking.pk %}" class="btn btn-outline" style="flex: 1; text-align: center;">Cancel</a>
+                <button type="submit" class="btn btn-primary" style="flex: 1;">Verify Payment & Confirm Booking</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

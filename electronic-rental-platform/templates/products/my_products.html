@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}My Products - RentalHub{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h1>My Products</h1>
+        <a href="{% url 'products:create' %}" class="btn btn-primary">Add New Product</a>
+    </div>
+    
+    {% if products %}
+        <div class="grid grid-3">
+            {% for product in products %}
+            <div class="card">
+                {% if product.images.first %}
+                    <img src="{{ product.images.first.image.url }}" alt="{{ product.title }}" class="card-img">
+                {% else %}
+                    <div class="card-img" style="background: linear-gradient(135deg, #e5e5e5 0%, #d4d4d4 100%); display: flex; align-items: center; justify-content: center; color: #999;">
+                        No Image
+                    </div>
+                {% endif %}
+                
+                <h3 style="margin-bottom: 0.5rem;">{{ product.title }}</h3>
+                <p style="color: var(--color-text-muted); font-size: 0.875rem; margin-bottom: 0.5rem;">{{ product.category.name }}</p>
+                
+                <div style="margin-bottom: 1rem;">
+                    <p style="font-size: 1.25rem; font-weight: 700;">${{ product.daily_price }}/day</p>
+                    <p style="font-size: 0.875rem; color: var(--color-text-muted);">Stock: {{ product.stock }} · {% if product.is_available %}Available{% else %}Unavailable{% endif %}</p>
+                </div>
+                
+                <div style="display: flex; gap: 0.5rem;">
+                    <a href="{% url 'products:edit' product.pk %}" class="btn btn-secondary" style="flex: 1; text-align: center;">Edit</a>
+                    <a href="{% url 'products:detail' product.pk %}" class="btn btn-outline" style="flex: 1; text-align: center;">View</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="card" style="text-align: center; padding: 3rem;">
+            <p style="color: var(--color-text-muted); font-size: 1.25rem; margin-bottom: 2rem;">You haven't added any products yet.</p>
+            <a href="{% url 'products:create' %}" class="btn btn-primary">Add Your First Product</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

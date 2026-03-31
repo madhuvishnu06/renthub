@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Product - RentalHub{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px; margin-top: 2rem;">
+    <h1 style="margin-bottom: 2rem;">Add New Product</h1>
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="card" style="margin-bottom: 2rem;">
+            <h2 style="margin-bottom: 1.5rem;">Product Details</h2>
+            
+            {% for field in form %}
+            <div class="form-group">
+                <label class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <span style="color: var(--color-error); font-size: 0.875rem;">{{ field.errors.0 }}</span>
+                {% endif %}
+                {% if field.help_text %}
+                    <span style="color: var(--color-text-muted); font-size: 0.875rem;">{{ field.help_text }}</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="card" style="margin-bottom: 2rem;">
+            <h2 style="margin-bottom: 1.5rem;">Product Images</h2>
+            <p style="color: var(--color-text-muted); margin-bottom: 1rem;">Upload up to 5 images. Check "Primary" for the main image.</p>
+            
+            {{ formset.management_form }}
+            {% for form in formset %}
+                <div style="padding: 1rem; border: 1px solid var(--color-border); border-radius: var(--radius); margin-bottom: 1rem;">
+                    {% for field in form %}
+                        <div class="form-group">
+                            <label class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+        
+        <div style="display: flex; gap: 1rem;">
+            <button type="submit" class="btn btn-primary" style="flex: 1;">Add Product</button>
+            <a href="{% url 'products:my_products' %}" class="btn btn-outline" style="flex: 1; text-align: center;">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

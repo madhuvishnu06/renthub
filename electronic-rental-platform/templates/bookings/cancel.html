@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Cancel Booking - RentalHub{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px; margin-top: 3rem;">
+    <div class="card">
+        <h1 style="margin-bottom: 1rem; color: var(--color-error);">Cancel Booking</h1>
+        <p style="margin-bottom: 2rem; font-size: 1.125rem;">Are you sure you want to cancel this booking for <strong>{{ booking.product.title }}</strong>?</p>
+        
+        <form method="post">
+            {% csrf_token %}
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary" style="flex: 1; background-color: var(--color-error);">Yes, Cancel Booking</button>
+                <a href="{% url 'bookings:detail' booking.pk %}" class="btn btn-outline" style="flex: 1; text-align: center;">Go Back</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

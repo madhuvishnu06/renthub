@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.title }} - RentalHub{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 2rem;">
+    <div class="grid grid-2" style="gap: 3rem; align-items: start;">
+        <!-- Image Gallery -->
+        <div>
+            {% if images.first %}
+                <img id="main-image" src="{{ images.first.image.url }}" alt="{{ product.title }}" style="width: 100%; border-radius: var(--radius); margin-bottom: 1rem;">
+                
+                {% if images|length > 1 %}
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 0.5rem;">
+                    {% for image in images %}
+                    <img src="{{ image.image.url }}" alt="{{ product.title }}" 
+                         onclick="document.getElementById('main-image').src='{{ image.image.url }}'"
+                         style="width: 100%; height: 100px; object-fit: cover; border-radius: var(--radius); cursor: pointer; border: 2px solid var(--color-border);">
+                    {% endfor %}
+                </div>
+                {% endif %}
+            {% else %}
+                <div style="width: 100%; height: 400px; background: linear-gradient(135deg, #e5e5e5 0%, #d4d4d4 100%); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; color: #999; font-size: 1.5rem;">
+                    No Image Available
+                </div>
+            {% endif %}
+        </div>
+        
+        <!-- Product Info -->
+        <div>
+            <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">{{ product.title }}</h1>
+            
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="color: #f59e0b; font-size: 1.5rem;">★</span>
+                    <span style="font-weight: 700; font-size: 1.25rem;">{{ product.average_rating|floatformat:1 }}</span>
+                    <span style="color: var(--color-text-muted);">({{ product.review_count }} reviews)</span>
+                </div>
+                <span style="padding: 0.25rem 0.75rem; background: var(--color-secondary); color: white; border-radius: 9999px; font-size: 0.875rem;">{{ product.get_condition_display }}</span>
+            </div>
+            
+            <div class="card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, #f5f3f0 0%, #e8e6e1 100%);">
+                <h3 style="margin-bottom: 1rem;">Pricing</h3>
+                <div style="display: grid; gap: 0.75rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>Daily Rate</span>
+                        <span style="font-size: 1.5rem; font-weight: 700; color: var(--color-secondary);">${{ product.daily_price }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>Weekly Rate</span>
+                        <span style="font-size: 1.25rem; font-weight: 600;">${{ product.weekly_price }}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>Monthly Rate</span>
+                        <span style="font-size: 1.25rem; font-weight: 600;">${{ product.monthly_price }}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <p style="color: var(--color-text-muted); margin-bottom: 0.5rem;">Availability: <strong style="color: {% if product.stock > 0 %}var(--color-success){% else %}var(--color-error){% endif %};">{{ product.stock }} in stock</strong></p>
+                <p style="color: var(--color-text-muted);">Listed by: <strong>{{ product.owner.username }}</strong></p>
+            </div>
+            
+            {% if user.is_authenticated and user != product.owner %}
+                <a href="{% url 'bookings:create' product.pk %}" class="btn btn-primary" style="width: 100%; text-align: center; display: block; margin-bottom: 1rem;">Book Now</a>
+                <a href="{% url 'chat:start' product.owner.pk %}" class="btn btn-outline" style="width: 100%; text-align: center; display: block;">Message Owner</a>
+            {% elif user == product.owner %}
+                <a href="{% url 'products:edit' product.pk %}" class="btn btn-secondary" style="width: 100%; text-align: center; display: block; margin-bottom: 0.5rem;">Edit Product</a>
+                <a href="{% url 'products:delete' product.pk %}" class="btn btn-outline" style="width: 100%; text-align: center; display: block; color: var(--color-error); border-color: var(--color-error);">Delete Product</a>
+            {% else %}
+                <a href="{% url 'users:login' %}?next={{ request.path }}" class="btn btn-primary" style="width: 100%; text-align: center; display: block;">Login to Book</a>
+            {% endif %}
+        </div>
+    </div>
+    
+    <!-- Description -->
+    <div class="card" style="margin-top: 3rem;">
+        <h2 style="margin-bottom: 1rem;">Description</h2>
+        <p style="line-height: 1.8; white-space: pre-line;">{{ product.description }}</p>
+    </div>
+    
+    <!-- Reviews Section -->
+    <div style="margin-top: 3rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2>Customer Reviews ({{ product.review_count }})</h2>
+            <!-- Fixed template logic to use context variables instead of filtering in template -->
+            {% if user.is_authenticated and user != product.owner %}
+                {% if user_has_completed_booking and not user_has_reviewed %}
+                    <a href="{% url 'products:review_create' product.pk %}" class="btn btn-primary">Write a Review</a>
+                {% endif %}
+            {% endif %}
+        </div>
+        
+        {% if reviews %}
+            {% for review in reviews %}
+            <div class="card" style="margin-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem;">
+                    <div>
+                        <strong>{{ review.user.username }}</strong>
+                        <div style="color: #f59e0b; margin-top: 0.25rem;">
+                            {% for i in "12345"|make_list %}
+                                {% if forloop.counter <= review.rating %}★{% else %}☆{% endif %}
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="color: var(--color-text-muted); font-size: 0.875rem; display: block; margin-bottom: 0.5rem;">{{ review.created_at|date:"M d, Y" }}</span>
+                        {% if user == review.user %}
+                            <div style="display: flex; gap: 0.5rem;">
+                                <a href="{% url 'products:review_edit' review.pk %}" style="color: var(--color-secondary); font-size: 0.875rem; font-weight: 600;">Edit</a>
+                                <a href="{% url 'products:review_delete' review.pk %}" style="color: var(--color-error); font-size: 0.875rem; font-weight: 600;">Delete</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <p style="color: var(--color-text-muted); line-height: 1.6;">{{ review.comment }}</p>
+            </div>
+            {% endfor %}
+            
+            {% if product.review_count > 5 %}
+                <p style="text-align: center; color: var(--color-text-muted); margin-top: 1rem;">Showing 5 of {{ product.review_count }} reviews</p>
+            {% endif %}
+        {% else %}
+            <p style="color: var(--color-text-muted); text-align: center; padding: 2rem;">No reviews yet. Be the first to review this product!</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

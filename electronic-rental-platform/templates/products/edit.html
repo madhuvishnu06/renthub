@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Edit {{ product.title }} - RentalHub{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px; margin-top: 2rem;">
+    <h1 style="margin-bottom: 2rem;">Edit Product</h1>
+    
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="card" style="margin-bottom: 2rem;">
+            <h2 style="margin-bottom: 1.5rem;">Product Details</h2>
+            
+            {% for field in form %}
+            <div class="form-group">
+                <label class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <span style="color: var(--color-error); font-size: 0.875rem;">{{ field.errors.0 }}</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="card" style="margin-bottom: 2rem;">
+            <h2 style="margin-bottom: 1.5rem;">Product Images</h2>
+            
+            {{ formset.management_form }}
+            {% for form in formset %}
+                <div style="padding: 1rem; border: 1px solid var(--color-border); border-radius: var(--radius); margin-bottom: 1rem;">
+                    {% for field in form %}
+                        <div class="form-group">
+                            <label class="form-label">{{ field.label }}</label>
+                            {{ field }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+        </div>
+        
+        <div style="display: flex; gap: 1rem;">
+            <button type="submit" class="btn btn-primary" style="flex: 1;">Save Changes</button>
+            <a href="{% url 'products:detail' product.pk %}" class="btn btn-outline" style="flex: 1; text-align: center;">Cancel</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}Approve Booking - RentalHub{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px; margin-top: 2rem;">
+    <h1 style="margin-bottom: 2rem;">Approve Booking Request</h1>
+    
+    <div class="card">
+        <h2 style="margin-bottom: 1rem;">Booking #{{ booking.pk }}</h2>
+        
+        <div style="margin-bottom: 1.5rem; padding: 1rem; background: var(--color-bg); border-radius: var(--radius);">
+            <p style="margin-bottom: 0.5rem;"><strong>Product:</strong> {{ booking.product.title }}</p>
+            <p style="margin-bottom: 0.5rem;"><strong>Customer:</strong> {{ booking.customer.username }}</p>
+            <p style="margin-bottom: 0.5rem;"><strong>Duration:</strong> {{ booking.duration_days }} days</p>
+            <p style="margin-bottom: 0.5rem;"><strong>Total:</strong> ${{ booking.total_price }}</p>
+        </div>
+        
+        <p style="margin-bottom: 1.5rem; color: var(--color-text-muted);">
+            By approving this booking, the customer will be notified to proceed with payment. You can add an optional message below.
+        </p>
+        
+        <form method="post">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label class="form-label">Message to Customer (Optional)</label>
+                <textarea name="notes" class="form-textarea" rows="3" placeholder="e.g., Product will be ready for pickup on the start date..."></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 0.5rem; margin-top: 1.5rem;">
+                <a href="{% url 'bookings:detail' booking.pk %}" class="btn btn-outline" style="flex: 1; text-align: center;">Cancel</a>
+                <button type="submit" class="btn btn-primary" style="flex: 1;">Approve & Request Payment</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}Profile - RentalHub{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 800px; margin-top: 2rem;">
+    <h1 style="margin-bottom: 2rem;">My Profile</h1>
+    
+    <div class="card">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            {% for field in form %}
+            <div class="form-group">
+                <label class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <span style="color: var(--color-error); font-size: 0.875rem;">{{ field.errors.0 }}</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+            
+            <button type="submit" class="btn btn-primary">Update Profile</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

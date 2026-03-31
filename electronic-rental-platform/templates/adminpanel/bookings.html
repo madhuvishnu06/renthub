@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Bookings - Admin{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 2rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+        <h1>Manage Bookings</h1>
+        <a href="{% url 'adminpanel:dashboard' %}" class="btn btn-outline">← Back to Dashboard</a>
+    </div>
+    
+    <!-- Filter -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <form method="get" style="display: flex; gap: 1rem; align-items: end;">
+            <div class="form-group" style="flex: 1; margin: 0;">
+                <label class="form-label">Filter by Status</label>
+                <select name="status" class="form-select">
+                    <option value="">All Statuses</option>
+                    <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>Pending</option>
+                    <option value="confirmed" {% if status_filter == 'confirmed' %}selected{% endif %}>Confirmed</option>
+                    <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>Completed</option>
+                    <option value="cancelled" {% if status_filter == 'cancelled' %}selected{% endif %}>Cancelled</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </form>
+    </div>
+    
+    <!-- Bookings Table -->
+    <div class="card">
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="border-bottom: 2px solid var(--color-border);">
+                        <th style="padding: 1rem; text-align: left;">ID</th>
+                        <th style="padding: 1rem; text-align: left;">Product</th>
+                        <th style="padding: 1rem; text-align: left;">Customer</th>
+                        <th style="padding: 1rem; text-align: left;">Dates</th>
+                        <th style="padding: 1rem; text-align: left;">Total</th>
+                        <th style="padding: 1rem; text-align: left;">Status</th>
+                        <th style="padding: 1rem; text-align: left;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                    <tr style="border-bottom: 1px solid var(--color-border);">
+                        <td style="padding: 1rem; font-weight: 600;">#{{ booking.pk }}</td>
+                        <td style="padding: 1rem;">{{ booking.product.title }}</td>
+                        <td style="padding: 1rem; color: var(--color-text-muted);">{{ booking.customer.username }}</td>
+                        <td style="padding: 1rem; color: var(--color-text-muted); font-size: 0.875rem;">
+                            {{ booking.start_date|date:"M d" }} - {{ booking.end_date|date:"M d, Y" }}
+                        </td>
+                        <td style="padding: 1rem; font-weight: 700; color: var(--color-secondary);">${{ booking.total_price }}</td>
+                        <td style="padding: 1rem;">
+                            <span style="padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 600;
+                                {% if booking.status == 'pending' %}background: #fef3c7; color: #92400e;
+                                {% elif booking.status == 'confirmed' %}background: #dbeafe; color: #1e40af;
+                                {% elif booking.status == 'completed' %}background: #d1fae5; color: #065f46;
+                                {% elif booking.status == 'cancelled' %}background: #fee2e2; color: #991b1b;
+                                {% endif %}">
+                                {{ booking.get_status_display }}
+                            </span>
+                        </td>
+                        <td style="padding: 1rem;">
+                            <a href="{% url 'bookings:detail' booking.pk %}" class="btn btn-outline" style="font-size: 0.875rem; padding: 0.5rem 1rem;">View</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" style="padding: 2rem; text-align: center; color: var(--color-text-muted);">No bookings found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

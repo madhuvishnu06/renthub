@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Manage Payment QR Code - RentalHub{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 700px; margin-top: 2rem;">
+    <h1 style="margin-bottom: 2rem;">Manage Payment QR Code</h1>
+    
+    <div class="card">
+        <p style="color: var(--color-text-muted); margin-bottom: 2rem;">Upload a QR code for customers to pay you directly. This will be shown during checkout.</p>
+        
+        {% if qr_code %}
+        <div style="text-align: center; margin-bottom: 2rem; padding: 1.5rem; background: var(--color-bg); border-radius: var(--radius);">
+            <h3 style="margin-bottom: 1rem;">Current QR Code</h3>
+            <img src="{{ qr_code.qr_code_image.url }}" alt="Payment QR Code" style="max-width: 300px; border-radius: var(--radius); border: 1px solid var(--color-border);">
+        </div>
+        {% endif %}
+        
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            {% for field in form %}
+            <div class="form-group">
+                <label class="form-label">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <span style="color: var(--color-error); font-size: 0.875rem;">{{ field.errors.0 }}</span>
+                {% endif %}
+                {% if field.help_text %}
+                    <span style="color: var(--color-text-muted); font-size: 0.875rem;">{{ field.help_text }}</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+            
+            <div style="display: flex; gap: 1rem;">
+                <button type="submit" class="btn btn-primary" style="flex: 1;">{% if qr_code %}Update{% else %}Upload{% endif %} QR Code</button>
+                <a href="{% url 'users:dashboard' %}" class="btn btn-outline" style="flex: 1; text-align: center;">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

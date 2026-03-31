@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - RentalHub{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 2rem;">
+    <h1 style="margin-bottom: 2rem;">Admin Dashboard</h1>
+    
+    <!-- Statistics Cards -->
+    <div class="grid grid-4" style="margin-bottom: 2rem;">
+        <div class="card" style="text-align: center; background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);">
+            <p style="color: #1e40af; font-size: 0.875rem; margin-bottom: 0.5rem; font-weight: 600;">Total Users</p>
+            <p style="font-size: 2.5rem; font-weight: 700; color: #1e3a8a;">{{ total_users }}</p>
+            <a href="{% url 'adminpanel:users' %}" style="color: #1e40af; font-size: 0.875rem; font-weight: 600;">Manage →</a>
+        </div>
+        <div class="card" style="text-align: center; background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);">
+            <p style="color: #065f46; font-size: 0.875rem; margin-bottom: 0.5rem; font-weight: 600;">Total Products</p>
+            <p style="font-size: 2.5rem; font-weight: 700; color: #064e3b;">{{ total_products }}</p>
+            <a href="{% url 'adminpanel:products' %}" style="color: #065f46; font-size: 0.875rem; font-weight: 600;">Manage →</a>
+        </div>
+        <div class="card" style="text-align: center; background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);">
+            <p style="color: #92400e; font-size: 0.875rem; margin-bottom: 0.5rem; font-weight: 600;">Total Bookings</p>
+            <p style="font-size: 2.5rem; font-weight: 700; color: #78350f;">{{ total_bookings }}</p>
+            <a href="{% url 'adminpanel:bookings' %}" style="color: #92400e; font-size: 0.875rem; font-weight: 600;">Manage →</a>
+        </div>
+        <div class="card" style="text-align: center; background: linear-gradient(135deg, #f5f3f0 0%, #e8e6e1 100%);">
+            <p style="color: var(--color-text-muted); font-size: 0.875rem; margin-bottom: 0.5rem; font-weight: 600;">Total Revenue</p>
+            <p style="font-size: 2.5rem; font-weight: 700; color: var(--color-secondary);">${{ total_revenue|floatformat:2 }}</p>
+            <a href="{% url 'payments:list' %}" style="color: var(--color-secondary); font-size: 0.875rem; font-weight: 600;">View →</a>
+        </div>
+    </div>
+    
+    <!-- Alerts -->
+    {% if pending_bookings > 0 %}
+    <div class="alert alert-info" style="margin-bottom: 2rem;">
+        <strong>{{ pending_bookings }}</strong> booking{{ pending_bookings|pluralize }} pending approval.
+        <a href="{% url 'adminpanel:bookings' %}?status=pending" style="margin-left: 1rem; font-weight: 600;">Review Now →</a>
+    </div>
+    {% endif %}
+    
+    <div class="grid grid-2" style="gap: 2rem; margin-bottom: 2rem;">
+        <!-- Recent Users -->
+        <div class="card">
+            <h2 style="margin-bottom: 1rem;">Recent Users</h2>
+            <div style="display: grid; gap: 0.75rem;">
+                {% for user in recent_users %}
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border: 1px solid var(--color-border); border-radius: var(--radius);">
+                    <div>
+                        <p style="font-weight: 600;">{{ user.username }}</p>
+                        <p style="color: var(--color-text-muted); font-size: 0.875rem;">{{ user.get_role_display }}</p>
+                    </div>
+                    <span style="padding: 0.25rem 0.75rem; background: var(--color-bg); border-radius: 9999px; font-size: 0.875rem;">
+                        {{ user.created_at|timesince }} ago
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <!-- Recent Bookings -->
+        <div class="card">
+            <h2 style="margin-bottom: 1rem;">Recent Bookings</h2>
+            <div style="display: grid; gap: 0.75rem;">
+                {% for booking in recent_bookings %}
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; border: 1px solid var(--color-border); border-radius: var(--radius);">
+                    <div>
+                        <p style="font-weight: 600;">{{ booking.product.title }}</p>
+                        <p style="color: var(--color-text-muted); font-size: 0.875rem;">{{ booking.customer.username }}</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <p style="font-weight: 700; color: var(--color-secondary);">${{ booking.total_price }}</p>
+                        <span style="padding: 0.25rem 0.5rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600;
+                            {% if booking.status == 'pending' %}background: #fef3c7; color: #92400e;
+                            {% elif booking.status == 'confirmed' %}background: #dbeafe; color: #1e40af;
+                            {% elif booking.status == 'completed' %}background: #d1fae5; color: #065f46;
+                            {% endif %}">
+                            {{ booking.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Categories Overview -->
+    <div class="card">
+        <h2 style="margin-bottom: 1rem;">Categories</h2>
+        <div class="grid grid-4">
+            {% for category in categories %}
+            <div style="padding: 1rem; border: 1px solid var(--color-border); border-radius: var(--radius); text-align: center;">
+                <h3 style="font-size: 1.125rem; margin-bottom: 0.5rem;">{{ category.name }}</h3>
+                <p style="color: var(--color-text-muted);">{{ category.product_count }} product{{ category.product_count|pluralize }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

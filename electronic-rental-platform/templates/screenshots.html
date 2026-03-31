@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Screenshots - Electronic Rental Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            color: #a0a0a0;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            border-radius: 15px;
+            padding: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(52, 211, 153, 0.5);
+            box-shadow: 0 10px 40px rgba(52, 211, 153, 0.2);
+        }
+
+        .feature-card h3 {
+            color: #34d399;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .feature-card li {
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+            color: #c0c0c0;
+        }
+
+        .feature-card li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #34d399;
+            font-weight: bold;
+        }
+
+        .screenshot-section {
+            margin-bottom: 60px;
+        }
+
+        .screenshot-section h2 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: #34d399;
+            border-bottom: 2px solid rgba(52, 211, 153, 0.3);
+            padding-bottom: 15px;
+        }
+
+        .screenshot-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+
+        .screenshot-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid rgba(52, 211, 153, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .screenshot-item:hover {
+            transform: scale(1.02);
+            border-color: rgba(52, 211, 153, 0.5);
+            box-shadow: 0 10px 40px rgba(52, 211, 153, 0.2);
+        }
+
+        .screenshot-placeholder {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #2d3748 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #34d399;
+            border-bottom: 1px solid rgba(52, 211, 153, 0.2);
+        }
+
+        .screenshot-info {
+            padding: 20px;
+        }
+
+        .screenshot-info h3 {
+            color: #34d399;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .screenshot-info p {
+            color: #a0a0a0;
+            font-size: 0.95rem;
+        }
+
+        .tech-stack {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 60px;
+        }
+
+        .tech-stack h2 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: #34d399;
+            text-align: center;
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .tech-item {
+            background: rgba(52, 211, 153, 0.1);
+            border: 1px solid rgba(52, 211, 153, 0.3);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .tech-item:hover {
+            background: rgba(52, 211, 153, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .tech-item h4 {
+            color: #34d399;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .tech-item p {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+        }
+
+        .installation-steps {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 60px;
+        }
+
+        .installation-steps h2 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: #34d399;
+        }
+
+        .step {
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid #34d399;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .step h3 {
+            color: #34d399;
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .step code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 15px;
+            display: block;
+            border-radius: 8px;
+            margin: 10px 0;
+            color: #4ade80;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+        }
+
+        .step p {
+            color: #c0c0c0;
+            margin: 10px 0;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            border-top: 1px solid rgba(52, 211, 153, 0.2);
+            margin-top: 60px;
+        }
+
+        .footer p {
+            color: #a0a0a0;
+            font-size: 0.95rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+            color: #1a1a2e;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 600;
+            margin: 20px 10px;
+            transition: all 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(52, 211, 153, 0.4);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 15px;
+            background: rgba(52, 211, 153, 0.2);
+            border: 1px solid rgba(52, 211, 153, 0.5);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #34d399;
+            margin: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .screenshot-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Electronic Rental Platform</h1>
+            <p>A comprehensive, production-ready rental platform built with Django backend and modern frontend technologies</p>
+            <div style="margin-top: 20px;">
+                <span class="badge">Django 4.2+</span>
+                <span class="badge">HTML5/CSS3</span>
+                <span class="badge">JavaScript ES6+</span>
+                <span class="badge">SQLite</span>
+                <span class="badge">Responsive Design</span>
+            </div>
+            <div style="margin-top: 30px;">
+                <a href="/" class="cta-button">View Live Platform</a>
+                <a href="#installation" class="cta-button">Installation Guide</a>
+            </div>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <h3>🔐 Authentication System</h3>
+                <ul>
+                    <li>Sign Up / Login / Logout</li>
+                    <li>Password Reset</li>
+                    <li>Role-based Access Control</li>
+                    <li>Email Verification (Mock)</li>
+                    <li>Profile Management</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3>📱 Electronics Management</h3>
+                <ul>
+                    <li>Full CRUD Operations</li>
+                    <li>Multiple Image Upload</li>
+                    <li>Category Organization</li>
+                    <li>Stock & Availability Tracking</li>
+                    <li>Advanced Search & Filters</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3>📅 Booking System</h3>
+                <ul>
+                    <li>Interactive Date Selection</li>
+                    <li>Real-time Price Calculation</li>
+                    <li>Availability Validation</li>
+                    <li>Invoice Generation</li>
+                    <li>Status Tracking</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3>💳 Payment Integration</h3>
+                <ul>
+                    <li>Mock Payment Gateway</li>
+                    <li>QR Code Support</li>
+                    <li>Screenshot Upload</li>
+                    <li>Transaction History</li>
+                    <li>Payment Verification</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3>⭐ Ratings & Reviews</h3>
+                <ul>
+                    <li>5-Star Rating System</li>
+                    <li>Written Reviews</li>
+                    <li>Average Rating Display</li>
+                    <li>Edit/Delete Reviews</li>
+                    <li>Verified Renter Only</li>
+                </ul>
+            </div>
+
+            <div class="feature-card">
+                <h3>💬 Chat System</h3>
+                <ul>
+                    <li>Customer-Owner Messaging</li>
+                    <li>Conversation Threads</li>
+                    <li>Unread Indicators</li>
+                    <li>Message History</li>
+                    <li>Clean Interface</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="screenshot-section">
+            <h2>Platform Screenshots</h2>
+            
+            <div class="screenshot-grid">
+                <div class="screenshot-item">
+                    <div class="screenshot-placeholder">
+                        🏠 Home Page
+                    </div>
+                    <div class="screenshot-info">
+                        <h3>Landing Page</h3>
+                        <p>Modern, responsive landing page with product grid, search functionality, and category filters. Features smooth animations and professional design.</p>
+                    </div>
+                </div>
+
+                <div class="screenshot-item">
+                    <div class="screenshot-placeholder">
+                        🔐 Login Page
+                    </div>
+                    <div class="screenshot-info">
+                        <h3>Authentication</h3>
+                        <p>Clean login/signup interface with role selection, password validation, and email verification. Secure authentication system with session management.</p>
+                    </div>
+                </div>
+
+                <div class="screenshot-item">
+                    <div class="screenshot-placeholder">
+                        📱 Product Details
+                    </div>
+                    <div class="screenshot-info">
+                        <h3>Product Detail Page</h3>
+                        <p>Comprehensive product view with image gallery, specifications, pricing, reviews, and booking button. Responsive image carousel with zoom functionality.</p>
+                    </div>
+                </div>
+
+                <div class="screenshot-item">
+                    <div class="screenshot-placeholder">
+                        📅 Booking Interface
+                    </div>
+                    <div class="screenshot-info">
+                        <h3>Booking & Date Selection</h3>
+                        <p>Interactive date picker with real-time price calculation. Shows daily, weekly, and monthly rates with automatic total computation.</p>
+                    </div>
+                </div>
+
+                <div class="screenshot-item">
+                    <div class="screenshot-placeholder">
+                        💳 Payment Gateway
+                    </div>
+                    <div class="screenshot-info">
+                        <h3>Payment Processing</h3>
+                        <p>Mock payment integration with multiple payment methods. Supports QR code payments and screenshot uploads for verification.</p>
+                    </div>
+                </div>
+
+                <div class="screenshot-item">
+                    <div class="screenshot-placeholder">
+                        👤 Customer Dashboard
+                    </div>
+                    <div class="screenshot-info">
+                        <h3>Customer Dashboard</h3>
+                        <p>User-friendly dashboard showing active bookings, payment history, reviews, and quick action buttons. Clean card-based layout.</p>
+                    </div>
+                </div>
+
+                <div class="screenshot-item">
+                    <div class="screenshot-placeholder">
+                        🏪 Shop Owner Dashboard
+                    </div>
+                    <div class="screenshot-info">
+                        <h3>Shop Owner Dashboard</h3>
+                        <p>Comprehensive business dashboard with product management, rental requests, earnings analytics, and inventory tracking.</p>
+                    </div>
+                </div>
+
+                <div class="screenshot-item">
+                    <div class="screenshot-placeholder">
+                        👨‍💼 Admin Panel
+                    </div>
+                    <div class="screenshot-info">
+                        <h3>Admin Dashboard</h3>
+                        <p>Powerful admin interface for managing users, products, categories, and platform analytics. Complete oversight of all operations.</p>
+                    </div>
+                </div>
+
+                <div class="screenshot-item">
+                    <div class="screenshot-placeholder">
+                        💬 Chat System
+                    </div>
+                    <div class="screenshot-info">
+                        <h3>Messaging Interface</h3>
+                        <p>Real-time chat between customers and shop owners. Conversation threads with message history and unread indicators.</p>
+                    </div>
+                </div>
+
+                <div class="screenshot-item">
+                    <div class="screenshot-placeholder">
+                        ⭐ Reviews & Ratings
+                    </div>
+                    <div class="screenshot-info">
+                        <h3>Rating System</h3>
+                        <p>Star-based rating system with written reviews. Average rating calculation and display on product pages.</p>
+                    </div>
+                </div>
+
+                <div class="screenshot-item">
+                    <div class="screenshot-placeholder">
+                        ➕ Add Product
+                    </div>
+                    <div class="screenshot-info">
+                        <h3>Product Management</h3>
+                        <p>Easy-to-use product creation form with multiple image uploads, category selection, pricing options, and inventory management.</p>
+                    </div>
+                </div>
+
+                <div class="screenshot-item">
+                    <div class="screenshot-placeholder">
+                        📊 Analytics
+                    </div>
+                    <div class="screenshot-info">
+                        <h3>Business Analytics</h3>
+                        <p>Detailed analytics showing booking trends, revenue statistics, popular products, and customer insights.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tech-stack">
+            <h2>Technology Stack</h2>
+            <div class="tech-grid">
+                <div class="tech-item">
+                    <h4>Django 4.2+</h4>
+                    <p>Backend framework with MVT architecture</p>
+                </div>
+                <div class="tech-item">
+                    <h4>SQLite</h4>
+                    <p>Database for development (PostgreSQL for production)</p>
+                </div>
+                <div class="tech-item">
+                    <h4>HTML5</h4>
+                    <p>Semantic markup structure</p>
+                </div>
+                <div class="tech-item">
+                    <h4>CSS3</h4>
+                    <p>Modern styling with animations</p>
+                </div>
+                <div class="tech-item">
+                    <h4>JavaScript ES6+</h4>
+                    <p>Interactive functionality</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Pillow</h4>
+                    <p>Image processing and upload handling</p>
+                </div>
+                <div class="tech-item">
+                    <h4>QR Code</h4>
+                    <p>QR code generation for payments</p>
+                </div>
+                <div class="tech-item">
+                    <h4>Python 3.8+</h4>
+                    <p>Backend programming language</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="installation-steps" id="installation">
+            <h2>Quick Installation Guide</h2>
+            
+            <div class="step">
+                <h3>Step 1: Extract Project</h3>
+                <p>Extract the downloaded ZIP file and navigate to the project directory</p>
+                <code>cd rental_platform</code>
+            </div>
+
+            <div class="step">
+                <h3>Step 2: Create Virtual Environment</h3>
+                <p>Create and activate a Python virtual environment</p>
+                <code># Windows<br>python -m venv venv<br>venv\Scripts\activate<br><br># macOS/Linux<br>python3 -m venv venv<br>source venv/bin/activate</code>
+            </div>
+
+            <div class="step">
+                <h3>Step 3: Install Dependencies</h3>
+                <p>Install all required Python packages</p>
+                <code>pip install -r requirements.txt</code>
+            </div>
+
+            <div class="step">
+                <h3>Step 4: Setup Database</h3>
+                <p>Run migrations to create database tables</p>
+                <code>python manage.py makemigrations<br>python manage.py migrate</code>
+            </div>
+
+            <div class="step">
+                <h3>Step 5: Create Admin User</h3>
+                <p>Create a superuser account for admin access</p>
+                <code>python manage.py createsuperuser</code>
+            </div>
+
+            <div class="step">
+                <h3>Step 6: Create Media Directories</h3>
+                <p>Create directories for uploaded files</p>
+                <code># Windows<br>mkdir media\products media\payments media\qrcodes<br><br># macOS/Linux<br>mkdir -p media/products media/payments media/qrcodes</code>
+            </div>
+
+            <div class="step">
+                <h3>Step 7: Run Development Server</h3>
+                <p>Start the Django development server</p>
+                <code>python manage.py runserver</code>
+            </div>
+
+            <div class="step">
+                <h3>Step 8: Access the Platform</h3>
+                <p>Open your browser and navigate to:</p>
+                <code>Main Site: http://127.0.0.1:8000/<br>Admin Panel: http://127.0.0.1:8000/admin/</code>
+            </div>
+        </div>
+
+        <div class="tech-stack">
+            <h2>User Roles & Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <h3>👤 Customer Role</h3>
+                    <ul>
+                        <li>Browse electronics catalog</li>
+                        <li>Search and filter products</li>
+                        <li>Book rentals with date selection</li>
+                        <li>Make payments</li>
+                        <li>Leave reviews and ratings</li>
+                        <li>Chat with shop owners</li>
+                        <li>View booking history</li>
+                        <li>Manage profile</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <h3>🏪 Shop Owner Role</h3>
+                    <ul>
+                        <li>Add/edit/delete products</li>
+                        <li>Manage inventory and stock</li>
+                        <li>View rental requests</li>
+                        <li>Upload QR codes for payments</li>
+                        <li>Track earnings and analytics</li>
+                        <li>Chat with customers</li>
+                        <li>Respond to reviews</li>
+                        <li>Manage product availability</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <h3>👨‍💼 Admin Role</h3>
+                    <ul>
+                        <li>Manage all users</li>
+                        <li>Oversee all products</li>
+                        <li>Manage categories</li>
+                        <li>View booking analytics</li>
+                        <li>Platform-wide statistics</li>
+                        <li>User verification</li>
+                        <li>Content moderation</li>
+                        <li>System configuration</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p><strong>Electronic Rental Platform</strong> - Production-Ready Django Application</p>
+            <p>Built with Django 4.2+, HTML5, CSS3, and JavaScript ES6+</p>
+            <p style="margin-top: 20px; color: #34d399;">Version 1.0.0 | 2025 | All Features Implemented</p>
+        </div>
+    </div>
+</body>
+</html>
